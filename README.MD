@@ -87,8 +87,7 @@ rabbitmq_individual_queue_messages{host="<http://localhost:15672",vhost="/",name
 
 4. **Access metrics**:
 
-```Open http://localhost:8000/metrics in your browser.
-```
+```Open http://localhost:8000/metrics in your browser.```
 
 ## 2. Script to Restart Laravel (CPU Monitor)
 
@@ -99,14 +98,11 @@ rabbitmq_individual_queue_messages{host="<http://localhost:15672",vhost="/",name
 
 1. **Make the script executable**:
 
-```chmod +x scripts/restart_laravel.sh
-```
+```chmod +x scripts/restart_laravel.sh```
 
 2. **Run in the background (optional)**:
 
-```
-nohup ./scripts/restart_laravel.sh &
-```
+```nohup ./scripts/restart_laravel.sh &```
 
 3. **Customize**:
  • Update SERVICE_NAME in the script to match your Laravel systemd service name.
