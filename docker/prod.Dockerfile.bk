@@ -1,0 +1,48 @@
+# Dockerfile to build a single container with Nginx + PHP-FPM for Laravel
+# Production Build wouldnt work without a project
+FROM php:8.1-fpm
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    nginx \
+    supervisor
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy Laravel files (assuming your Laravel source is in the parent folder)
+COPY . /var/www/html
+
+# Install Laravel dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Fix permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage
+
+# Remove default Nginx config
+RUN rm /etc/nginx/sites-enabled/default
+
+# Copy your custom Nginx and Supervisor configs (if you have them)
+# COPY nginx.conf /etc/nginx/sites-available/laravel.conf
+# RUN ln -s /etc/nginx/sites-available/laravel.conf /etc/nginx/sites-enabled/laravel.conf
+# COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start Supervisor to run both Nginx and PHP-FPM
+CMD ["/usr/bin/supervisord", "-n"]
